@@ -1,0 +1,40 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwnerOrAdmin() {
+      return request.auth.uid == request.resource.data.createdBy.uid || request.auth.token.admin == true;
+    }
+    function isUpdatingField(fieldName) {
+      return (!(fieldName in resource.data) && fieldName in request.resource.data) || resource.data[fieldName] != request.resource.data[fieldName];
+    }
+    match /recipes/{document} {
+      allow read: if true;
+      allow update: if isOwnerOrAdmin()
+        && request.resource.data.updatedAt == request.time
+        && (
+            request.auth.token.admin == true
+            ||
+            (
+              resource.data.createdBy.uid == request.resource.data.createdBy.uid
+              && resource.data.createdBy.username == request.resource.data.createdBy.username
+            )
+        )
+        && !isUpdatingField("imageUrlByName")
+        && !isUpdatingField("viewCount");
+      allow delete: if isOwnerOrAdmin();
+      allow create: if isOwnerOrAdmin()
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time
+        && !("imageUrlByName" in request.resource.data)
+        && request.resource.data.viewCount == 0;
+    }
+
+    match /users/{userId} {
+      allow get: if request.auth.uid != null;
+    }
+
+    match /usernames/{username} {
+      allow get: if true;
+    }
+  }
+}

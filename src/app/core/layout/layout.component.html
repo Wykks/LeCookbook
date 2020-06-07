@@ -1,0 +1,58 @@
+<ion-split-pane contentId="main-content">
+  <ion-menu contentId="main-content" type="overlay">
+    <ion-content *ngIf="{ isLoggedIn: isLoggedIn$ | async } as context">
+      <div class="menu-content">
+        <ion-list id="main-list" lines="none">
+          <ion-list-header>Livre de recettes</ion-list-header>
+          <app-layout-menu-item
+            *ngIf="context.isLoggedIn"
+            itemIcon="home"
+            itemLabel="Mes recettes"
+            link="/list/personal"
+          ></app-layout-menu-item>
+          <app-layout-menu-item
+            itemIcon="globe"
+            itemLabel="Recettes publique"
+            link="/list/public"
+          ></app-layout-menu-item>
+          <app-layout-menu-item
+            *ngIf="context.isLoggedIn"
+            itemIcon="add"
+            itemLabel="Nouvelle recette"
+            link="/create"
+            routerDirection="forward"
+          ></app-layout-menu-item>
+        </ion-list>
+        <ion-list lines="none">
+          <app-layout-menu-item
+            *ngIf="context.isLoggedIn"
+            itemIcon="person"
+            itemLabel="Compte"
+            link="/account"
+          ></app-layout-menu-item>
+          <app-layout-menu-item
+            *ngIf="context.isLoggedIn"
+            itemIcon="log-out"
+            itemLabel="Se déconnecter"
+            (itemClick)="logout()"
+          ></app-layout-menu-item>
+          <app-layout-menu-item
+            *ngIf="!context.isLoggedIn"
+            itemIcon="log-in"
+            itemLabel="Se connecter"
+            link="/login"
+          ></app-layout-menu-item>
+        </ion-list>
+        <div class="spacing"></div>
+        <ion-list class="about" lines="none">
+          <app-layout-menu-item
+            itemIcon="information"
+            itemLabel="A propos"
+            link="/about"
+          ></app-layout-menu-item>
+        </ion-list>
+      </div>
+    </ion-content>
+  </ion-menu>
+  <ion-router-outlet id="main-content"></ion-router-outlet>
+</ion-split-pane>

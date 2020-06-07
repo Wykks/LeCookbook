@@ -1,0 +1,40 @@
+<p class="ion-margin-start ion-margin-bottom">Instructions</p>
+<ion-item
+  [formGroup]="$any(directivesForm)"
+  class="ion-margin-bottom"
+  *ngFor="let control of directivesForm.controls; index as i"
+>
+  <ion-textarea
+    #input
+    [formControlName]="i"
+    (paste)="onPasteDirectives(i, $event)"
+    (keydown.arrowup)="focusInput(i - 1)"
+    (keydown.arrowdown)="focusInput(i + 1)"
+    (keydown.backspace)="deleteDirectiveIfEmpty(i, $event)"
+    (keydown.enter)="addDirectiveAt(i + 1, $event)"
+    (keydown.delete)="deleteDirectiveBelowIfCursorLastPos(i, $event)"
+    [spellcheck]="true"
+    [autoGrow]="true"
+    [rows]="1"
+  ></ion-textarea>
+  <ion-button
+    *ngIf="i > 0"
+    shape="round"
+    (click)="deleteDirective(i)"
+    size="small"
+  >
+    <ion-icon
+      slot="icon-only"
+      ios="remove-outline"
+      md="remove-sharp"
+    ></ion-icon>
+  </ion-button>
+</ion-item>
+<ion-button
+  class="add"
+  shape="round"
+  (click)="addDirectiveAtEnd()"
+  size="small"
+>
+  <ion-icon slot="icon-only" ios="add-outline" md="add-sharp"></ion-icon>
+</ion-button>

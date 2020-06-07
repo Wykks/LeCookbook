@@ -1,0 +1,48 @@
+<app-cookbook-page pageTitle="Compte">
+  <ion-buttons pageToolbar slot="end">
+    <ion-button [disabled]="!accountForm.valid || isWorking" (click)="update()">
+      <span *ngIf="ios">Mettre à jour</span>
+      <span *ngIf="!ios && mobile">
+        <ion-icon slot="icon-only" name="save"></ion-icon>
+      </span>
+    </ion-button>
+  </ion-buttons>
+  <form pageContent [formGroup]="accountForm" (ngSubmit)="update()">
+    <ion-grid>
+      <ion-row class="ion-justify-content-center">
+        <ion-col
+          class="ion-align-self-center"
+          size-md="6"
+          size-lg="5"
+          size-xs="12"
+        >
+          <div class="ion-padding">
+            <input style="width: 0; visibility: hidden;" type="submit" />
+            <app-username-input
+              class="ion-margin-bottom"
+              formControlName="username"
+            ></app-username-input>
+            <ion-item class="ion-margin-bottom">
+              <ion-label position="floating">Email</ion-label>
+              <ion-input formControlName="email" type="email"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="floating">Mot de passe</ion-label>
+              <ion-input formControlName="password" type="password"></ion-input>
+            </ion-item>
+          </div>
+          <div class="ion-padding" *ngIf="!mobile">
+            <ion-button
+              size="large"
+              type="submit"
+              [disabled]="!accountForm.valid || isWorking"
+              expand="block"
+            >
+              Mettre à jour
+            </ion-button>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</app-cookbook-page>

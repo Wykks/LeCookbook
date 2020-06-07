@@ -1,0 +1,38 @@
+<app-cookbook-page
+  *ngIf="recipe$ | async as recipe; else loadingOrError"
+  [pageTitle]="pageTitle$ | async"
+  [toolbarTransparent]="toolbarTransparent$ | async"
+  [noMenuButton]="true"
+>
+  <ion-buttons pageToolbar slot="end">
+    <ion-button *ngIf="canEdit$ | async" (click)="edit(recipe)">
+      <span *ngIf="ios">Editer</span>
+      <span *ngIf="!ios">
+        <ion-icon slot="icon-only" name="create"></ion-icon>
+      </span>
+    </ion-button>
+    <ion-button *ngIf="canShare" (click)="share(recipe)">
+      <span *ngIf="ios">Partager</span>
+      <span *ngIf="!ios">
+        <ion-icon slot="icon-only" name="share-social"></ion-icon>
+      </span>
+    </ion-button>
+  </ion-buttons>
+  <ion-buttons pageToolbar slot="start">
+    <ion-back-button defaultHref="/"></ion-back-button>
+  </ion-buttons>
+  <div pageContent [ngSwitch]="belowSMLayout$ | async">
+    <app-xs-recipe-view
+      *ngSwitchCase="true"
+      [recipe]="recipe"
+    ></app-xs-recipe-view>
+    <app-md-recipe-view
+      *ngSwitchDefault
+      pageContent
+      [recipe]="recipe"
+    ></app-md-recipe-view>
+  </div>
+</app-cookbook-page>
+<ng-template #loadingOrError>
+  <app-loading-or-error></app-loading-or-error>
+</ng-template>

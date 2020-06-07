@@ -1,0 +1,73 @@
+<p class="ion-margin-start ion-margin-bottom">Ingrédients</p>
+<ion-item
+  [formGroup]="$any(ingredientsForm)"
+  class="ion-margin-bottom"
+  *ngFor="let control of ingredientsForm.controls; index as i"
+  [ngClass]="{ 'space-left': parentByIngredient.get(control) !== null }"
+>
+  <ion-icon
+    *ngIf="parentByIngredient.get(control) !== null"
+    ios="chevron-forward-outline"
+    md="chevron-forward-sharp"
+  ></ion-icon>
+  <ion-icon
+    *ngIf="control.value.type === IngredientType.PART"
+    ios="book-outline"
+    md="book-sharp"
+  ></ion-icon>
+  <app-edit-recipe-ingredient-input
+    #input
+    [ngClass]="{
+      'space-left':
+        parentByIngredient.get(control) !== null ||
+        control.value.type === IngredientType.PART
+    }"
+    [formControlName]="i"
+    (paste)="onPasteIngredients(i, $event)"
+    (keydown.arrowleft)="downgradeIngredientIfCursorFirstPos(input, i, $event)"
+    (keydown.arrowright)="promoteIngredientIfCursorLastPos(input, i, $event)"
+    (keydown.arrowup)="focusInput(i - 1)"
+    (keydown.arrowdown)="focusInput(i + 1)"
+    (keydown.backspace)="deleteIngredientIfEmpty(i, $event)"
+    (keydown.enter)="addIngredientAt(i + 1, $event)"
+    (keydown.delete)="deleteIngredientBelowIfCursorLastPos(i, $event)"
+  ></app-edit-recipe-ingredient-input>
+  <ion-button
+    shape="round"
+    (click)="
+      changeIngredientType(
+        i,
+        control.value.type === IngredientType.INGREDIENT
+          ? IngredientType.PART
+          : IngredientType.INGREDIENT
+      )
+    "
+    size="small"
+  >
+    <ion-icon
+      slot="icon-only"
+      ios="swap-horizontal-outline"
+      md="swap-horizontal-sharp"
+    ></ion-icon>
+  </ion-button>
+  <ion-button
+    *ngIf="i > 0"
+    shape="round"
+    (click)="deleteIngredient(i)"
+    size="small"
+  >
+    <ion-icon
+      slot="icon-only"
+      ios="remove-outline"
+      md="remove-sharp"
+    ></ion-icon>
+  </ion-button>
+</ion-item>
+<ion-button
+  class="add"
+  shape="round"
+  (click)="addIngredientAtEnd()"
+  size="small"
+>
+  <ion-icon slot="icon-only" ios="add-outline" md="add-sharp"></ion-icon>
+</ion-button>

@@ -1,0 +1,55 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="login"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Création de compte</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="registerForm" (ngSubmit)="register()">
+    <ion-grid>
+      <ion-row class="ion-justify-content-center">
+        <ion-col
+          class="ion-align-self-center"
+          size-md="6"
+          size-lg="5"
+          size-xs="12"
+        >
+          <div class="ion-padding">
+            <input style="width: 0; visibility: hidden;" type="submit" />
+            <app-username-input
+              class="ion-margin-bottom"
+              formControlName="username"
+            ></app-username-input>
+            <ion-item class="ion-margin-bottom">
+              <ion-label position="floating">Email</ion-label>
+              <ion-input formControlName="email" type="email"></ion-input>
+            </ion-item>
+            <ion-item class="ion-margin-bottom">
+              <ion-label position="floating">Mot de passe</ion-label>
+              <ion-input formControlName="password" type="password"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="floating"
+                >Confirmer le mot de passe</ion-label
+              >
+              <ion-input formControlName="confirm" type="password"></ion-input>
+            </ion-item>
+          </div>
+          <div class="ion-padding">
+            <ion-button
+              size="large"
+              type="submit"
+              [disabled]="!registerForm.valid"
+              expand="block"
+            >
+              Créer le compte
+            </ion-button>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>

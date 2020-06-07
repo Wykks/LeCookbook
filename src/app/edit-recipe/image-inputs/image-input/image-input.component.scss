@@ -1,0 +1,48 @@
+:host {
+  display: flex;
+  background-color: var(--ion-color-light-shade);
+  position: relative;
+}
+
+input {
+  display: none;
+}
+
+label {
+  flex: 1 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.ripple-parent {
+  position: relative;
+  overflow: hidden;
+}
+
+.overlay {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-color: var(--ion-color-light-shade);
+
+  app-image-with-status {
+    position: absolute;
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.remove {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  margin: 0px;
+}

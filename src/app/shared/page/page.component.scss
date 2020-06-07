@@ -1,0 +1,22 @@
+ion-toolbar {
+  &:not(.transparent) {
+    ion-menu-button {
+      color: var(--ion-color-primary);
+    }
+  }
+  &.absolute {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+  &.transparent {
+    --background: transparent;
+    --color: white;
+    ion-button,
+    ion-back-button,
+    ion-menu-button {
+      --color: white;
+    }
+  }
+}

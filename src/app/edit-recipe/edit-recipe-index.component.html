@@ -1,0 +1,155 @@
+<app-cookbook-page
+  *ngIf="{ originalRecipe: originalRecipe$ | async } as context"
+  [pageTitle]="pageTitle"
+  [noMenuButton]="true"
+>
+  <ion-buttons pageToolbar slot="end">
+    <ion-button
+      *ngIf="mobile"
+      [disabled]="!recipeForm.valid || isWorking"
+      (click)="save(context.originalRecipe)"
+    >
+      <span *ngIf="ios">Sauvegarder</span>
+      <span *ngIf="!ios">
+        <ion-icon slot="icon-only" name="save"></ion-icon>
+      </span>
+    </ion-button>
+    <ion-button
+      *ngIf="context.originalRecipe"
+      [disabled]="isWorking"
+      (click)="deleteRecipe(context.originalRecipe)"
+    >
+      <span *ngIf="ios">Supprimer</span>
+      <span *ngIf="!ios">
+        <ion-icon slot="icon-only" name="trash"></ion-icon>
+      </span>
+    </ion-button>
+  </ion-buttons>
+  <ion-buttons pageToolbar slot="start">
+    <ion-back-button defaultHref="/"></ion-back-button>
+  </ion-buttons>
+  <form
+    pageContent
+    [formGroup]="recipeForm"
+    (ngSubmit)="save(context.originalRecipe)"
+  >
+    <ion-grid>
+      <ion-row class="ion-justify-content-center">
+        <ion-col
+          class="ion-align-self-center"
+          size-lg="8"
+          size-md="10"
+          size-xs="12"
+        >
+          <input
+            style="width: 0; visibility: hidden; position: absolute;"
+            type="submit"
+          />
+          <ion-item class="ion-margin-bottom">
+            <ion-label position="floating">Titre</ion-label>
+            <ion-input formControlName="title" type="text"></ion-input>
+          </ion-item>
+          <app-edit-recipe-image-inputs
+            [recipeId]="
+              context.originalRecipe ? context.originalRecipe.id : undefined
+            "
+            class="ion-margin-bottom"
+            formControlName="images"
+          ></app-edit-recipe-image-inputs>
+          <ion-item class="ion-margin-bottom">
+            <ion-label position="floating">Catégorie</ion-label>
+            <ion-select formControlName="category">
+              <ion-select-option
+                *ngFor="
+                  let cat of CategoriesLabel | keyvalue: keepOriginalOrder
+                "
+                [value]="cat.key"
+                >{{ cat.value }}</ion-select-option
+              >
+            </ion-select>
+          </ion-item>
+          <ion-grid class="ion-no-padding ion-margin-bottom">
+            <ion-row class="ion-align-items-center">
+              <ion-col
+                class="ion-padding-start"
+                size-lg="4"
+                size-md="12"
+                size-xs="12"
+              >
+                <app-edit-recipe-time-input
+                  formControlName="timeToPrepare"
+                  label="Temps de préparation"
+                ></app-edit-recipe-time-input>
+              </ion-col>
+              <ion-col
+                class="ion-padding-start"
+                size-lg="4"
+                size-md="12"
+                size-xs="12"
+              >
+                <app-edit-recipe-time-input
+                  formControlName="cookTime"
+                  label="Temps de cuisson"
+                ></app-edit-recipe-time-input>
+              </ion-col>
+              <ion-col
+                class="ion-no-padding"
+                size-lg="2"
+                size-md="12"
+                size-xs="12"
+              >
+                <ion-item>
+                  <ion-label position="floating">Préchauffage</ion-label>
+                  <ion-input formControlName="preHeatTemp"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+          <ion-item>
+            <ion-label position="floating">Nombre de parts</ion-label>
+            <ion-input formControlName="servingCount" type="number"></ion-input>
+          </ion-item>
+          <app-edit-recipe-ingredients-input
+            formControlName="ingredients"
+          ></app-edit-recipe-ingredients-input>
+          <app-edit-recipe-directives-input
+            class="ion-margin-bottom"
+            formControlName="directives"
+          ></app-edit-recipe-directives-input>
+          <ion-item class="ion-margin-bottom">
+            <ion-label position="floating">
+              Mots clés (séparés par une virgule)</ion-label
+            >
+            <ion-input formControlName="tags" type="text"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Source</ion-label>
+            <ion-input
+              enterkeyhint="send"
+              formControlName="source"
+              type="text"
+            ></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Source</ion-label>
+            <ion-input
+              enterkeyhint="send"
+              formControlName="source"
+              type="text"
+            ></ion-input>
+          </ion-item>
+          <div class="ion-padding">
+            <ion-button
+              size="large"
+              type="submit"
+              [disabled]="!recipeForm.valid || isWorking"
+              expand="block"
+            >
+              Sauvegarder
+            </ion-button>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</app-cookbook-page>

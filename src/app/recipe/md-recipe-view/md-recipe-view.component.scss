@@ -1,0 +1,30 @@
+:host {
+  display: block;
+  flex: 1 1 auto;
+}
+
+.content {
+  display: flex;
+  flex-direction: row;
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 0.5 auto;
+  max-width: 450px;
+}
+
+.right {
+  flex: 1 1 auto;
+}
+
+.caption {
+  margin-top: 0px;
+}
+
+app-recipe-image {
+  max-width: 350px;
+  min-height: 150px;
+}

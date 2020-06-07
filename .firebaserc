@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "simple-cookbook-app",
+    "prod": "le-cookbook"
+  }
+}
