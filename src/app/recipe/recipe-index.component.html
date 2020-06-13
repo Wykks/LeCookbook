@@ -26,11 +26,7 @@
       *ngSwitchCase="true"
       [recipe]="recipe"
     ></app-xs-recipe-view>
-    <app-md-recipe-view
-      *ngSwitchDefault
-      pageContent
-      [recipe]="recipe"
-    ></app-md-recipe-view>
+    <app-md-recipe-view *ngSwitchDefault [recipe]="recipe"></app-md-recipe-view>
   </div>
 </app-cookbook-page>
 <ng-template #loadingOrError>

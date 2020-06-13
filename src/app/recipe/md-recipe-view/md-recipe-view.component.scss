@@ -8,16 +8,17 @@
   flex-direction: row;
 }
 
-.left {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1 0.5 auto;
-  max-width: 450px;
+app-recipe-directives {
+  flex: 1 1 auto;
 }
 
-.right {
-  flex: 1 1 auto;
+app-recipe-ingredients-list {
+  flex: 1 0.3 auto;
+}
+
+.left-pane {
+  max-width: 350px;
+  flex: 1 1.1 auto;
 }
 
 .caption {
@@ -25,6 +26,5 @@
 }
 
 app-recipe-image {
-  max-width: 350px;
   min-height: 150px;
 }

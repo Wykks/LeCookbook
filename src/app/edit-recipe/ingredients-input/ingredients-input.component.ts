@@ -71,7 +71,7 @@ export class IngredientsInputComponent
   }
 
   writeValue(ingredients: Ingredient[]): void {
-    this.ingredientsForm.controls = [];
+    this.ingredientsForm.clear();
     if (!ingredients.length) {
       this.programInsertInProgress = true;
       this.addIngredientAtEnd();

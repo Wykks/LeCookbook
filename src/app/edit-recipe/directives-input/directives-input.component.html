@@ -8,10 +8,7 @@
     #input
     [formControlName]="i"
     (paste)="onPasteDirectives(i, $event)"
-    (keydown.arrowup)="focusInput(i - 1)"
-    (keydown.arrowdown)="focusInput(i + 1)"
     (keydown.backspace)="deleteDirectiveIfEmpty(i, $event)"
-    (keydown.enter)="addDirectiveAt(i + 1, $event)"
     (keydown.delete)="deleteDirectiveBelowIfCursorLastPos(i, $event)"
     [spellcheck]="true"
     [autoGrow]="true"
@@ -22,6 +19,7 @@
     shape="round"
     (click)="deleteDirective(i)"
     size="small"
+    class="ion-align-self-center"
   >
     <ion-icon
       slot="icon-only"

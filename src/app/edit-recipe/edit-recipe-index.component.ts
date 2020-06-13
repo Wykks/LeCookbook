@@ -45,6 +45,7 @@ export class EditRecipeIndexComponent {
     servingCount: [2],
     tags: [''],
     source: [null],
+    showInPublicList: [false],
   });
 
   ios = this.config.get('mode') === 'ios';
@@ -240,7 +241,7 @@ export class EditRecipeIndexComponent {
       cookTime: rawRecipe.cookTime,
       servingCount: rawRecipe.servingCount,
       tags,
-      showInPublicList: false,
+      showInPublicList: rawRecipe.showInPublicList,
       source: rawRecipe.source,
     };
   }
@@ -258,6 +259,7 @@ export class EditRecipeIndexComponent {
       servingCount: recipe.servingCount,
       tags: recipe.tags.join(', '),
       source: recipe.source,
+      showInPublicList: recipe.showInPublicList,
     });
   }
 

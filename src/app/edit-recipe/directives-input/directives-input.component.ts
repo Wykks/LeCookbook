@@ -109,10 +109,7 @@ export class DirectivesInputComponent
     }
   }
 
-  addDirectiveAt(index: number, event?: Event, directive: string = '') {
-    if (event) {
-      event.preventDefault();
-    }
+  addDirectiveAt(index: number, directive: string = '') {
     this.directivesForm.insert(index, new FormControl(directive));
     if (this.programInsertInProgress) {
       return;
@@ -143,7 +140,7 @@ export class DirectivesInputComponent
   private insertMultipleDirectives(directives: string[], startIndex = 0) {
     this.programInsertInProgress = true;
     directives.forEach((directive, idx) => {
-      this.addDirectiveAt(startIndex + idx, undefined, directive);
+      this.addDirectiveAt(startIndex + idx, directive);
     });
     this.programInsertInProgress = false;
     this.directivesForm.updateValueAndValidity();

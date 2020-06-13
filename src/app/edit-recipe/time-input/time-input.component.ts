@@ -25,7 +25,12 @@ import { Subscription } from 'rxjs';
         </ion-col>
         <ion-col size="4">
           <ion-item>
-            <ion-input formControlName="hours" type="number"></ion-input>
+            <ion-input
+              formControlName="hours"
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+            ></ion-input>
           </ion-item>
         </ion-col>
         <ion-col size="1" class="ion-justify-content-center">
@@ -33,7 +38,12 @@ import { Subscription } from 'rxjs';
         </ion-col>
         <ion-col size="4">
           <ion-item>
-            <ion-input formControlName="min" type="number"></ion-input>
+            <ion-input
+              formControlName="min"
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+            ></ion-input>
           </ion-item>
         </ion-col>
       </ion-row>
@@ -42,6 +52,7 @@ import { Subscription } from 'rxjs';
   styles: [
     `
       ion-grid {
+        padding-left: 0px;
         --ion-grid-columns: 19;
         --ion-grid-column-padding: 0px;
       }

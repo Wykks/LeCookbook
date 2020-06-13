@@ -14,6 +14,7 @@ import { XsRecipeViewComponent } from './xs-recipe-view/xs-recipe-view.component
 import { IngredientsListComponent } from './ingredients-list/ingredients-list.component';
 import { TimingComponent } from './timing/timing.component';
 import { DirectivesComponent } from './directives/directives.component';
+import { TimePipe } from './timing/time.pipe';
 
 export const routes: Routes = [
   {
@@ -37,6 +38,7 @@ export const routes: Routes = [
     IngredientsListComponent,
     TimingComponent,
     DirectivesComponent,
+    TimePipe,
   ],
   imports: [
     CommonModule,

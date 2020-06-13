@@ -10,7 +10,13 @@ import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
       <ion-item *ngFor="let directive of directives">{{ directive }}</ion-item>
     </ion-list>
   `,
-  styles: [],
+  styles: [
+    `
+      h2 {
+        margin-top: 0px;
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DirectivesComponent {

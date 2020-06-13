@@ -4,12 +4,17 @@ import { Recipe } from 'models/recipe';
 @Component({
   selector: 'app-recipe-timing',
   template: `
-    <div class="timing">
-      Temps total : {{ recipe.timeToPrepare + recipe.cookTime }}
+    <div *ngIf="recipe.timeToPrepare" class="time-row">
+      <ion-icon ios="time-outline" md="time-sharp"></ion-icon> Préparation :
+      {{ recipe.timeToPrepare | time }}
     </div>
-    <div class="sub-timing ion-padding ion-margin-top">
-      <div>Préparation : {{ recipe.timeToPrepare }}</div>
-      <div>Cuisson : {{ recipe.cookTime }}</div>
+    <div *ngIf="recipe.cookTime" class="time-row">
+      <ion-icon ios="time-outline" md="time-sharp"></ion-icon> Cuisson :
+      {{ recipe.cookTime | time }}
+    </div>
+    <div *ngIf="recipe.preHeatTemp" class="time-row">
+      <ion-icon ios="timer-outline" md="timer-sharp"></ion-icon> Préchauffage :
+      {{ recipe.preHeatTemp }}
     </div>
   `,
   styles: [
@@ -18,16 +23,12 @@ import { Recipe } from 'models/recipe';
         display: flex;
         flex-direction: column;
       }
-
-      .timing {
-        align-self: center;
-      }
-
-      .sub-timing {
+      .time-row {
         display: flex;
-        justify-content: space-around;
-        border-top: ridge 1px;
-        border-bottom: ridge 1px;
+        align-items: center;
+      }
+      ion-icon {
+        padding-right: 2px;
       }
     `,
   ],
