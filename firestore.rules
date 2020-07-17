@@ -4,9 +4,6 @@ service cloud.firestore {
     function isOwnerOrAdmin() {
       return request.auth.uid == request.resource.data.createdBy.uid || request.auth.token.admin == true;
     }
-    function isUpdatingField(fieldName) {
-      return (!(fieldName in resource.data) && fieldName in request.resource.data) || resource.data[fieldName] != request.resource.data[fieldName];
-    }
     match /recipes/{document} {
       allow read: if true;
       allow update: if isOwnerOrAdmin()
@@ -19,13 +16,12 @@ service cloud.firestore {
               && resource.data.createdBy.username == request.resource.data.createdBy.username
             )
         )
-        && !isUpdatingField("imageUrlByName")
-        && !isUpdatingField("viewCount");
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['imageByName', 'viewCount']);
       allow delete: if isOwnerOrAdmin();
       allow create: if isOwnerOrAdmin()
         && request.resource.data.createdAt == request.time
         && request.resource.data.updatedAt == request.time
-        && !("imageUrlByName" in request.resource.data)
+        && !("imageByName" in request.resource.data)
         && request.resource.data.viewCount == 0;
     }
 

@@ -22,6 +22,16 @@ export interface Ingredient {
   type: IngredientType;
 }
 
+export const IMAGE_WIDTH = 640;
+export const IMAGE_HEIGHT = 360;
+
+export interface Image {
+  jpeg: string;
+  webp: string;
+  thumbnail_webp: string;
+  thumbnail_jpeg: string;
+}
+
 export interface Recipe {
   id: string;
   createdBy: { username: string; uid: string };
@@ -43,5 +53,5 @@ export interface Recipe {
 
   // Controlled server side
   viewCount: number;
-  imageUrlByName?: { [imageName: string]: string };
+  imageByName?: { [imageName: string]: Image };
 }

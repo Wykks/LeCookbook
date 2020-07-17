@@ -2,7 +2,7 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
-    "jest": ["jest", "node"]
+    "types": ["jest", "node"]
   },
   "files": ["src/zone-flags.ts", "src/polyfills.ts"],
   "include": ["src/**/*.spec.ts", "src/**/*.d.ts"]

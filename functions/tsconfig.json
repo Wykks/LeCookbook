@@ -6,6 +6,7 @@
     "strict": true,
     "noUnusedParameters": true,
     "noUnusedLocals": true,
+    "esModuleInterop": true,
     "target": "es2017",
     "plugins": [
       {

@@ -78,7 +78,7 @@
   },
   "lint-staged": {
     "*.{js,json,css,scss,md,ts,html}": "prettier --write",
-    "*.ts": "tslint -c tslint.json -p tsconfig.json --fix"
+    "!(functions)/**/*.ts": "tslint -c tslint.json -p tsconfig.app.json --fix"
   },
   "config": {
     "commitizen": {

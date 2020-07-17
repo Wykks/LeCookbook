@@ -1,6 +1,8 @@
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
-import type { Recipe } from '../../models/recipe';
+import { Recipe, IMAGE_WIDTH, IMAGE_HEIGHT } from '../../models/recipe';
+import sharp, { Sharp } from 'sharp';
+import { Bucket, File } from '@google-cloud/storage';
 
 const firebase = admin.initializeApp();
 
@@ -103,25 +105,91 @@ export const createUsername = functionsWithRegion.firestore
 export const recipeImageOnFinalize = functionsWithRegion.storage
   .object()
   .onFinalize(async (object) => {
-    if (!object.name!.startsWith('recipes/')) {
+    const filePath = object.name!;
+    if (!filePath.startsWith('recipes/') || filePath.endsWith('_op')) {
       return null;
     }
     const bucket = firebase.storage().bucket();
-    const file = bucket.file(object.name!);
-    file.makePublic();
+    const file = bucket.file(filePath);
     const [, recipeId, imageName] = file.name.match('^recipes/(.+)/(.+)')!;
+
+    const [
+      thumbnailWebpUrl,
+      webpUrl,
+      thumbnailJpegUrl,
+      jpegUrl,
+    ] = await Promise.all([
+      createOptimisedImage(
+        `${filePath}_thumb_webp_op`,
+        'image/webp',
+        file,
+        bucket,
+        // 16/9 Format
+        sharp().resize(355, 200).webp({ quality: 50 })
+      ),
+      createOptimisedImage(
+        `${filePath}_webp_op`,
+        'image/webp',
+        file,
+        bucket,
+        // 16/9 Format
+        sharp().resize(IMAGE_WIDTH, IMAGE_HEIGHT).webp()
+      ),
+      createOptimisedImage(
+        `${filePath}_thumb_jpeg_op`,
+        'image/jpeg',
+        file,
+        bucket,
+        sharp().resize(355, 200).jpeg({ progressive: true, quality: 55 })
+      ),
+      createOptimisedImage(
+        `${filePath}_jpeg_op`,
+        'image/jpeg',
+        file,
+        bucket,
+        sharp().resize(IMAGE_WIDTH, IMAGE_HEIGHT).jpeg({ progressive: true })
+      ),
+    ]);
     const db = firebase.firestore();
     const recipeDoc = db.doc(`recipes/${recipeId}`);
     return db.runTransaction(async (transaction) => {
       const recipe = <Recipe>(await transaction.get(recipeDoc)).data();
-      let imageUrlByName = recipe.imageUrlByName;
-      if (!imageUrlByName) {
-        imageUrlByName = {};
+      let imageByName = recipe.imageByName;
+      if (!imageByName) {
+        imageByName = {};
       }
-      imageUrlByName[imageName] = object.mediaLink!;
-      transaction.update(recipeDoc, { imageUrlByName });
+      imageByName[imageName] = {
+        jpeg: jpegUrl,
+        thumbnail_webp: thumbnailWebpUrl,
+        thumbnail_jpeg: thumbnailJpegUrl,
+        webp: webpUrl,
+      };
+      transaction.update(recipeDoc, { imageByName });
     });
   });
+
+async function createOptimisedImage(
+  newFilePath: string,
+  contentType: string,
+  file: File,
+  bucket: Bucket,
+  pipeline: Sharp
+) {
+  const metadata = {
+    contentType,
+    cacheControl: 'public, max-age=31536000',
+  };
+  const thumbnailFile = bucket.file(newFilePath);
+  const thumbnailUploadStream = thumbnailFile.createWriteStream({ metadata });
+  pipeline.pipe(thumbnailUploadStream);
+  file.createReadStream().pipe(pipeline);
+  await new Promise((resolve, reject) =>
+    thumbnailUploadStream.on('finish', resolve).on('error', reject)
+  );
+  return `https://firebasestorage.googleapis.com/v0/b/${
+    bucket.name
+  }/o/${encodeURIComponent(newFilePath)}?alt=media`;
+}
 
 export const recipeOnUpdate = functionsWithRegion.firestore
   .document('recipes/{recipeId}')
@@ -148,16 +216,22 @@ export const recipeOnUpdate = functionsWithRegion.firestore
     const updatePromise: Promise<unknown> = db.runTransaction(
       async (transaction) => {
         const recipe = <Recipe>(await transaction.get(change.after.ref)).data();
-        const imageUrlByName = recipe.imageUrlByName!;
+        const imageByName = recipe.imageByName!;
         for (const imageToDelete of imagesToDelete) {
-          delete imageUrlByName[imageToDelete];
+          delete imageByName[imageToDelete];
         }
-        transaction.update(change.after.ref, { imageUrlByName });
+        transaction.update(change.after.ref, { imageByName });
       }
     );
     const bucket = firebase.storage().bucket();
     const imagesRemovePromises = imagesToDelete.map((imageName) =>
-      bucket.file(`recipes/${recipeId}/${imageName}`).delete()
+      Promise.all([
+        bucket.file(`recipes/${recipeId}/${imageName}`).delete(),
+        bucket.file(`recipes/${recipeId}/${imageName}_thumb_webp_op`).delete(),
+        bucket.file(`recipes/${recipeId}/${imageName}_webp_op`).delete(),
+        bucket.file(`recipes/${recipeId}/${imageName}_thumb_jpeg_op`).delete(),
+        bucket.file(`recipes/${recipeId}/${imageName}_jpeg_op`).delete(),
+      ]).catch()
     );
     return Promise.all([updatePromise, ...imagesRemovePromises]);
   });

@@ -116,7 +116,7 @@ export class ImageInputComponent implements OnInit {
         elem.width = img.width;
         elem.height = img.height;
         ctx.drawImage(img, 0, 0, img.width, img.height);
-        resolve(ctx.canvas.toDataURL('image/jpeg', 0.8));
+        resolve(ctx.canvas.toDataURL('image/jpeg', 0.9));
       };
     });
   }

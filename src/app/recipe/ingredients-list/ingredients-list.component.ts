@@ -8,7 +8,9 @@ import { Ingredient, IngredientType } from 'models/recipe';
       Ingrédients
     </h2>
     <ion-list lines="none">
-      <ion-list-header>Pour {{ servingCount }} personnes</ion-list-header>
+      <ion-list-header *ngIf="servingCount"
+        >Pour {{ servingCount }} personnes</ion-list-header
+      >
       <ion-item *ngFor="let ingredient of ingredients">
         <ion-icon
           *ngIf="ingredient.type === IngredientType.PART"

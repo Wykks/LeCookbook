@@ -8,6 +8,13 @@ $transition: opacity 0.5s ease-in-out;
   }
 }
 
+.processing {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+}
+
 .overlay {
   position: absolute;
   height: 100%;
@@ -18,13 +25,18 @@ $transition: opacity 0.5s ease-in-out;
 
 app-image-with-status {
   height: 100%;
-  --image-with-status-transition: #{$transition};
-  --image-with-status-opacity: 0;
-  &.visible {
-    --image-with-status-opacity: 1;
-  }
-  &.animated {
-    --image-with-status-will-change: opacity;
+}
+
+:host.animated {
+  app-image-with-status {
+    --image-with-status-transition: #{$transition};
+    --image-with-status-opacity: 0;
+    &.visible {
+      --image-with-status-opacity: 1;
+    }
+    &.animated {
+      --image-with-status-will-change: opacity;
+    }
   }
 }
 

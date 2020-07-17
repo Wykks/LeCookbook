@@ -3,28 +3,28 @@
   flex: 1 1 auto;
 }
 
+.header {
+  app-recipe-image {
+    max-width: 640px;
+    margin: auto;
+  }
+  .caption {
+    margin-top: 0px;
+  }
+  app-recipe-timing {
+    align-self: flex-start;
+  }
+}
+
 .content {
   display: flex;
   flex-direction: row;
-}
 
-app-recipe-directives {
-  flex: 1 1 auto;
-}
+  app-recipe-directives {
+    flex: 1 1 auto;
+  }
 
-app-recipe-ingredients-list {
-  flex: 1 0.3 auto;
-}
-
-.left-pane {
-  max-width: 350px;
-  flex: 1 1.1 auto;
-}
-
-.caption {
-  margin-top: 0px;
-}
-
-app-recipe-image {
-  min-height: 150px;
+  app-recipe-ingredients-list {
+    flex: 1 0.3 auto;
+  }
 }
