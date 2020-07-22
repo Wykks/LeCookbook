@@ -109,7 +109,16 @@ export class RecipeService {
           .collection<Recipe>('recipes', (ref) =>
             ref.where('createdBy.uid', '==', currentUser!.uid)
           )
-          .valueChanges({ idField: 'id' })
+          .get()
+      ),
+      map((snapshots) =>
+        snapshots.docs.map(
+          (snapshot) =>
+            <Recipe>{
+              id: snapshot.id,
+              ...snapshot.data(),
+            }
+        )
       )
     );
   }
@@ -119,7 +128,18 @@ export class RecipeService {
       .collection<Recipe>('recipes', (ref) =>
         ref.where('showInPublicList', '==', true)
       )
-      .valueChanges({ idField: 'id' });
+      .get()
+      .pipe(
+        map((snapshots) =>
+          snapshots.docs.map(
+            (snapshot) =>
+              <Recipe>{
+                id: snapshot.id,
+                ...snapshot.data(),
+              }
+          )
+        )
+      );
   }
 
   getRecipe(recipeId: string) {
