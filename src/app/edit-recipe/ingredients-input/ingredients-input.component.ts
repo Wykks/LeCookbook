@@ -227,17 +227,20 @@ export class IngredientsInputComponent
 
   private insertMultipleIngredients(ingredients: Ingredient[], startIndex = 0) {
     this.programInsertInProgress = true;
-    const firstIngredient = ingredients.shift()!;
-    const currentInput = this.ingredientsForm.controls[startIndex];
-    const currentInputText = currentInput.value.text
-      ? `${currentInput.value.text} ${firstIngredient.text}`
-      : firstIngredient.text;
-    currentInput.setValue({
-      type: firstIngredient.type,
-      text: currentInputText,
-    });
+    if (this.ingredientsForm.controls.length) {
+      const firstIngredient = ingredients.shift()!;
+      const currentInput = this.ingredientsForm.controls[startIndex];
+      const currentInputText = currentInput.value.text
+        ? `${currentInput.value.text} ${firstIngredient.text}`
+        : firstIngredient.text;
+      currentInput.setValue({
+        type: firstIngredient.type,
+        text: currentInputText,
+      });
+      startIndex++;
+    }
     ingredients.forEach((ingredient, idx) => {
-      this.addIngredientAt(startIndex + idx + 1, undefined, ingredient);
+      this.addIngredientAt(startIndex + idx, undefined, ingredient);
     });
     this.updateParentByIngredient();
     this.programInsertInProgress = false;
