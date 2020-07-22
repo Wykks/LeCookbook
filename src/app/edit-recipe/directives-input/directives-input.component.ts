@@ -139,8 +139,15 @@ export class DirectivesInputComponent
 
   private insertMultipleDirectives(directives: string[], startIndex = 0) {
     this.programInsertInProgress = true;
+    const firstDirective = directives.shift()!;
+    const currentInput = this.directivesForm.controls[startIndex];
+    currentInput.setValue(
+      currentInput.value
+        ? `${currentInput.value} ${firstDirective}`
+        : firstDirective
+    );
     directives.forEach((directive, idx) => {
-      this.addDirectiveAt(startIndex + idx, directive);
+      this.addDirectiveAt(startIndex + idx + 1, directive);
     });
     this.programInsertInProgress = false;
     this.directivesForm.updateValueAndValidity();

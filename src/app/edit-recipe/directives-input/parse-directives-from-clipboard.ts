@@ -12,8 +12,7 @@ export function parseDirectivesFromClipboard(event: ClipboardEvent): string[] {
       directives.push('');
     } else {
       const idx = directives.length ? directives.length - 1 : 0;
-      const step = directives[idx] ? `\n${line}` : line;
-      directives[idx] += step;
+      directives[idx] = directives[idx] ? `${directives[idx]}\n${line}` : line;
       addDirectiveStepOnNextGap = true;
     }
   }
