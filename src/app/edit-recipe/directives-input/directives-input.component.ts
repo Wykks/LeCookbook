@@ -57,13 +57,18 @@ export class DirectivesInputComponent
   }
 
   writeValue(directives: string[]): void {
-    this.directivesForm.controls = [];
+    if (
+      JSON.stringify(directives) === JSON.stringify(this.directivesForm.value)
+    ) {
+      return;
+    }
+    this.programInsertInProgress = true;
+    this.directivesForm.clear();
     if (!directives.length) {
-      this.programInsertInProgress = true;
       this.addDirectiveAtEnd();
       this.programInsertInProgress = false;
     } else {
-      this.insertMultipleDirectives(directives);
+      this.insertMultipleDirectives(directives, { emitEvent: false });
     }
     this.cd.markForCheck();
   }
@@ -72,9 +77,7 @@ export class DirectivesInputComponent
     this.sub.add(
       this.directivesForm.valueChanges
         .pipe(filter(() => !this.programInsertInProgress))
-        .subscribe((directives: string[]) =>
-          fn(directives.filter((directive) => !!directive))
-        )
+        .subscribe((directives: string[]) => fn(directives))
     );
   }
 
@@ -134,11 +137,15 @@ export class DirectivesInputComponent
   onPasteDirectives(index: number, event: ClipboardEvent) {
     event.preventDefault();
     const directives = parseDirectivesFromClipboard(event);
-    this.insertMultipleDirectives(directives, index);
+    this.insertMultipleDirectives(directives, { startIndex: index });
   }
 
-  private insertMultipleDirectives(directives: string[], startIndex = 0) {
+  private insertMultipleDirectives(
+    directives: string[],
+    options: { startIndex?: number; emitEvent?: boolean }
+  ) {
     this.programInsertInProgress = true;
+    let startIndex = options.startIndex ? options.startIndex : 0;
     if (this.directivesForm.controls.length) {
       const firstDirective = directives.shift()!;
       const currentInput = this.directivesForm.controls[startIndex];
@@ -153,6 +160,8 @@ export class DirectivesInputComponent
       this.addDirectiveAt(startIndex + idx, directive);
     });
     this.programInsertInProgress = false;
-    this.directivesForm.updateValueAndValidity();
+    this.directivesForm.updateValueAndValidity({
+      emitEvent: options.emitEvent,
+    });
   }
 }

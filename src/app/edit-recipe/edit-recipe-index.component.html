@@ -1,11 +1,31 @@
 <app-cookbook-page
   *ngIf="{ originalRecipe: originalRecipe$ | async } as context"
   [pageTitle]="pageTitle"
+  [showTitleInHeader]="!ios"
   [noMenuButton]="true"
 >
   <ion-buttons pageToolbar slot="end">
     <ion-button
-      *ngIf="mobile"
+      [disabled]="(canUndo$ | async) === false || isWorking"
+      (click)="undo()"
+    >
+      <ion-icon
+        slot="icon-only"
+        ios="arrow-undo-outline"
+        md="arrow-undo-sharp"
+      ></ion-icon>
+    </ion-button>
+    <ion-button
+      [disabled]="(canRedo$ | async) === false || isWorking"
+      (click)="redo()"
+    >
+      <ion-icon
+        slot="icon-only"
+        ios="arrow-redo-outline"
+        md="arrow-redo-sharp"
+      ></ion-icon>
+    </ion-button>
+    <ion-button
       [disabled]="!recipeForm.valid || isWorking"
       (click)="save(context.originalRecipe)"
     >
@@ -30,6 +50,7 @@
   </ion-buttons>
   <form
     pageContent
+    [disableForm]="disableForm"
     [formGroup]="recipeForm"
     (ngSubmit)="save(context.originalRecipe)"
   >

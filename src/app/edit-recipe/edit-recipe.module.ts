@@ -7,6 +7,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { AuthGuard } from '../core/auth.guard';
 import { UserGuard } from '../core/user.guard';
+import { DisableFormModule } from '../shared/disable-form/disable-form.module';
 import { ImageWithStatusModule } from '../shared/image-with-status/image-with-status.module';
 import { PageModule } from '../shared/page/page.module';
 import { DirectivesInputComponent } from './directives-input/directives-input.component';
@@ -46,6 +47,7 @@ const routes: Routes = [
     ReactiveFormsModule,
     AngularFireStorageModule,
     ImageWithStatusModule,
+    DisableFormModule,
   ],
 })
 export class EditRecipeModule {}

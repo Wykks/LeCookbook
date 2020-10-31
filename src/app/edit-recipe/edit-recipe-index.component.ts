@@ -13,19 +13,21 @@ import {
   Platform,
   ToastController,
 } from '@ionic/angular';
-import { forkJoin, Observable, of } from 'rxjs';
-import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
+import { EMPTY, forkJoin, Observable, of } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import {
   CategoriesLabel,
   Recipe,
   RecipeCategory,
 } from '../../../models/recipe';
 import { RecipeImage, RecipeService } from '../core/recipe/recipe.service';
+import { FormUndoRedoService } from './form-undo-redo.service';
 import { EMPTY_IMAGES } from './image-inputs/image-inputs.component';
 
 @Component({
   selector: 'app-edit-recipe-index',
   templateUrl: './edit-recipe-index.component.html',
+  providers: [FormUndoRedoService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditRecipeIndexComponent {
@@ -52,10 +54,13 @@ export class EditRecipeIndexComponent {
   mobile = this.platform.is('mobile');
   isWorking = false;
   pageTitle = 'Nouvelle recette';
+  disableForm = false;
 
   CategoriesLabel = CategoriesLabel;
 
-  originalRecipe$: Observable<Recipe>;
+  originalRecipe$: Observable<Recipe | undefined>;
+  canUndo$ = this.formUndoRedoService.canUndo$;
+  canRedo$ = this.formUndoRedoService.canRedo$;
 
   private loadingElement: HTMLIonLoadingElement;
 
@@ -69,27 +74,35 @@ export class EditRecipeIndexComponent {
     private navController: NavController,
     private loadingController: LoadingController,
     private alertController: AlertController,
-    private activatedRoute: ActivatedRoute
-  ) {}
+    private activatedRoute: ActivatedRoute,
+    private formUndoRedoService: FormUndoRedoService
+  ) {
+    this.formUndoRedoService.registerForm(this.recipeForm);
+  }
 
   async ionViewWillEnter() {
     this.originalRecipe$ = this.activatedRoute.paramMap.pipe(
       map((params) => params.get('recipeId')),
-      filter((recipeId): recipeId is string => !!recipeId),
+      switchMap((recipeId) => {
+        if (recipeId !== null) {
+          return of(recipeId);
+        }
+        this.formUndoRedoService.clear();
+        return EMPTY;
+      }),
       tap(() => {
-        this.pageTitle = 'Edition de recette';
-        this.recipeForm.disable({ emitEvent: false });
+        this.pageTitle = 'Edition';
+        this.disableForm = true;
+        this.cd.markForCheck();
       }),
       switchMap((recipeId) => this.recipeService.getRecipe(recipeId)),
-      filter(() => !this.isWorking),
       tap((recipe) => {
-        if (!recipe) {
+        if (recipe) {
+          this.setRecipeToForm(recipe);
+        } else {
           this.navController.navigateBack('/', { replaceUrl: true });
         }
-        this.recipeForm.enable({ emitEvent: false });
-      }),
-      filter((recipe): recipe is Recipe => !!recipe),
-      tap((recipe) => this.setRecipeToForm(recipe))
+      })
     );
     this.cd.markForCheck();
   }
@@ -106,7 +119,15 @@ export class EditRecipeIndexComponent {
     }
   }
 
-  async save(originalRecipe: Recipe | null) {
+  undo() {
+    this.formUndoRedoService.undo();
+  }
+
+  redo() {
+    this.formUndoRedoService.redo();
+  }
+
+  async save(originalRecipe: Recipe | undefined | null) {
     if (!this.recipeForm.valid) {
       return;
     }
@@ -247,20 +268,28 @@ export class EditRecipeIndexComponent {
   }
 
   private setRecipeToForm(recipe: Recipe) {
-    this.recipeForm.reset({
-      title: recipe.title,
-      category: recipe.category,
-      images: [...recipe.imageNames],
-      ingredients: [...recipe.ingredients],
-      directives: recipe.directives,
-      rating: recipe.rating,
-      timeToPrepare: recipe.timeToPrepare,
-      cookTime: recipe.cookTime,
-      servingCount: recipe.servingCount,
-      tags: recipe.tags.join(', '),
-      source: recipe.source,
-      showInPublicList: recipe.showInPublicList,
-    });
+    this.recipeForm.reset(
+      {
+        title: recipe.title,
+        category: recipe.category,
+        images: [...recipe.imageNames],
+        ingredients: [
+          ...recipe.ingredients.filter((ingredient) => !!ingredient),
+        ],
+        directives: [...recipe.directives.filter((directive) => !!directive)],
+        rating: recipe.rating,
+        timeToPrepare: recipe.timeToPrepare,
+        cookTime: recipe.cookTime,
+        servingCount: recipe.servingCount,
+        tags: recipe.tags.join(', '),
+        source: recipe.source,
+        showInPublicList: recipe.showInPublicList,
+      },
+      { emitEvent: false }
+    );
+    this.disableForm = false;
+    this.cd.markForCheck();
+    this.formUndoRedoService.clear();
   }
 
   private async confirmDialog(header: string, message: string) {

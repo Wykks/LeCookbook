@@ -1,17 +1,17 @@
 import {
-  Component,
   ChangeDetectionStrategy,
+  Component,
   Input,
   OnDestroy,
 } from '@angular/core';
 import {
-  FormBuilder,
   ControlValueAccessor,
-  Validator,
-  ValidationErrors,
-  Validators,
-  NG_VALUE_ACCESSOR,
+  FormBuilder,
   NG_VALIDATORS,
+  NG_VALUE_ACCESSOR,
+  ValidationErrors,
+  Validator,
+  Validators,
 } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
@@ -96,7 +96,7 @@ export class TimeInputComponent
     return this.timeForm.valid ? null : { invalidTime: true };
   }
 
-  writeValue(value: number): void {
+  writeValue(value: number | string): void {
     const { hours, min } = this.minToForm(value);
     this.timeForm.reset(
       {
@@ -126,10 +126,11 @@ export class TimeInputComponent
     return hours * 60 + min;
   }
 
-  private minToForm(value: number) {
+  private minToForm(value: number | string) {
+    const isString = typeof value === 'string';
     return {
-      hours: Math.trunc(value / 60),
-      min: value % 60,
+      hours: isString ? 0 : Math.trunc(<number>value / 60),
+      min: isString ? 0 : <number>value % 60,
     };
   }
 }

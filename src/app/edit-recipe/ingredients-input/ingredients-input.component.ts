@@ -14,9 +14,9 @@ import {
   FormControl,
   NG_VALUE_ACCESSOR,
 } from '@angular/forms';
-import { Subscription } from 'rxjs';
-import { delay, first, filter } from 'rxjs/operators';
 import { Ingredient, IngredientType } from 'models/recipe';
+import { Subscription } from 'rxjs';
+import { delay, filter, first } from 'rxjs/operators';
 import { IngredientInputComponent } from './ingredient-input/ingredient-input.component';
 import { parseIngredientFromClipboard } from './parse-ingredient-from-clipboard';
 
@@ -71,14 +71,19 @@ export class IngredientsInputComponent
   }
 
   writeValue(ingredients: Ingredient[]): void {
+    if (
+      JSON.stringify(ingredients) === JSON.stringify(this.ingredientsForm.value)
+    ) {
+      return;
+    }
+    this.programInsertInProgress = true;
     this.ingredientsForm.clear();
     if (!ingredients.length) {
-      this.programInsertInProgress = true;
       this.addIngredientAtEnd();
       this.updateParentByIngredient();
       this.programInsertInProgress = false;
     } else {
-      this.insertMultipleIngredients(ingredients);
+      this.insertMultipleIngredients(ingredients, { emitEvent: false });
     }
     this.cd.markForCheck();
   }
@@ -87,9 +92,7 @@ export class IngredientsInputComponent
     this.sub.add(
       this.ingredientsForm.valueChanges
         .pipe(filter(() => !this.programInsertInProgress))
-        .subscribe((ingredients: Ingredient[]) =>
-          fn(ingredients.filter((ingredient) => !!ingredient))
-        )
+        .subscribe((ingredients: Ingredient[]) => fn(ingredients))
     );
   }
 
@@ -222,11 +225,15 @@ export class IngredientsInputComponent
   onPasteIngredients(index: number, event: ClipboardEvent) {
     event.preventDefault();
     const ingredients = parseIngredientFromClipboard(event);
-    this.insertMultipleIngredients(ingredients, index);
+    this.insertMultipleIngredients(ingredients, { startIndex: index });
   }
 
-  private insertMultipleIngredients(ingredients: Ingredient[], startIndex = 0) {
+  private insertMultipleIngredients(
+    ingredients: Ingredient[],
+    options: { startIndex?: number; emitEvent?: boolean }
+  ) {
     this.programInsertInProgress = true;
+    let startIndex = options.startIndex ? options.startIndex : 0;
     if (this.ingredientsForm.controls.length) {
       const firstIngredient = ingredients.shift()!;
       const currentInput = this.ingredientsForm.controls[startIndex];
@@ -244,7 +251,9 @@ export class IngredientsInputComponent
     });
     this.updateParentByIngredient();
     this.programInsertInProgress = false;
-    this.ingredientsForm.updateValueAndValidity();
+    this.ingredientsForm.updateValueAndValidity({
+      emitEvent: options.emitEvent,
+    });
   }
 
   private updateParentByIngredient() {

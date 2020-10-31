@@ -23,7 +23,7 @@ import {
         <ion-buttons *ngIf="!noMenuButton" slot="start">
           <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-title>{{ pageTitle }}</ion-title>
+        <ion-title *ngIf="showTitleInHeader">{{ pageTitle }}</ion-title>
         <ng-content select="[pageToolbar]"></ng-content>
       </ion-toolbar>
     </ion-header>
@@ -49,6 +49,7 @@ export class PageComponent implements AfterViewInit, OnChanges {
   @Input() pageTitle: string | null;
   @Input() toolbarTransparent: boolean | null = false;
   @Input() noMenuButton = false;
+  @Input() showTitleInHeader = true;
 
   @ViewChild('toolbar', { read: ElementRef }) toolbar: ElementRef<HTMLElement>;
 
