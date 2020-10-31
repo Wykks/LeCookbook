@@ -1,12 +1,12 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isOwnerOrAdmin() {
-      return request.auth.uid == request.resource.data.createdBy.uid || request.auth.token.admin == true;
+    function isOwnerOrAdmin(data) {
+      return request.auth.uid == data.createdBy.uid || request.auth.token.admin == true;
     }
     match /recipes/{document} {
       allow read: if true;
-      allow update: if isOwnerOrAdmin()
+      allow update: if isOwnerOrAdmin(request.resource.data)
         && request.resource.data.updatedAt == request.time
         && (
             request.auth.token.admin == true
@@ -17,8 +17,8 @@ service cloud.firestore {
             )
         )
         && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['imageByName', 'viewCount']);
-      allow delete: if isOwnerOrAdmin();
-      allow create: if isOwnerOrAdmin()
+      allow delete: if isOwnerOrAdmin(resource.data);
+      allow create: if isOwnerOrAdmin(request.resource.data)
         && request.resource.data.createdAt == request.time
         && request.resource.data.updatedAt == request.time
         && !("imageByName" in request.resource.data)
