@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireFunctions } from '@angular/fire/functions';
-import type Firebase from 'firebase';
+import type firebase from 'firebase/app';
 import { from, of, ReplaySubject } from 'rxjs';
 import { filter, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
@@ -15,7 +15,7 @@ const DISPLAY_NAME_PREFIX = 'COOKBOOKUSER:';
 export class UserService {
   isLoggedIn$ = this.angularFireAuth.authState.pipe(map((user) => !!user));
 
-  private currentUser = new ReplaySubject<null | Firebase.User>(1);
+  private currentUser = new ReplaySubject<null | firebase.User>(1);
   private currentDisplayName = new ReplaySubject<null | string>(1);
 
   constructor(
@@ -28,7 +28,7 @@ export class UserService {
         tap((user) => {
           this.currentUser.next(user);
         }),
-        filter((user): user is Firebase.User => !!user),
+        filter((user): user is firebase.User => !!user),
         map((user) => {
           if (
             !user.displayName ||

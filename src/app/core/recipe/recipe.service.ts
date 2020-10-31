@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
 import * as cuid from 'cuid';
-import { firestore } from 'firebase/app';
+import firebase from 'firebase/app';
 import { combineLatest, of } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 import { Recipe } from '../../../../models/recipe';
@@ -26,8 +26,8 @@ export class RecipeService {
   ) {}
 
   addRecipe(recipe: Partial<Recipe>, images: (string | null)[]) {
-    const createdAt = <any>firestore.FieldValue.serverTimestamp();
-    const updatedAt = <any>firestore.FieldValue.serverTimestamp();
+    const createdAt = <any>firebase.firestore.FieldValue.serverTimestamp();
+    const updatedAt = <any>firebase.firestore.FieldValue.serverTimestamp();
     const recipeImages = this.prepareRecipeImages(images);
     const imageNames = recipeImages.map((recipeImage) =>
       recipeImage ? recipeImage.name : null
@@ -84,12 +84,13 @@ export class RecipeService {
     newRecipe.imageNames = recipeImages.map((recipeImage) =>
       recipeImage ? recipeImage.name : null
     );
-    newRecipe.updatedAt = <any>firestore.FieldValue.serverTimestamp();
+    newRecipe.updatedAt = <any>firebase.firestore.FieldValue.serverTimestamp();
     await this.collection.doc(recipeId).update({ ...newRecipe });
     return recipeImages;
   }
 
   removeRecipe(recipeId: string) {
+    console.log(recipeId);
     return this.collection.doc(recipeId).delete();
   }
 
