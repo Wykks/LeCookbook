@@ -1,6 +1,6 @@
 {
   "name": "the-cookbook",
-  "version": "1.0.0-alpha4",
+  "version": "1.0.0-alpha5",
   "author": "Wykks",
   "description": "A simple cookbook progressive web app",
   "scripts": {
