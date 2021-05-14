@@ -1,11 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { redirectUnauthorizedTo } from '@angular/fire/auth-guard';
+import { AngularFireAuthGuard, redirectUnauthorizedTo } from '@angular/fire/auth-guard';
 import { AngularFireStorageModule } from '@angular/fire/storage';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
-import { AuthGuard } from '../core/auth.guard';
 import { UserGuard } from '../core/user.guard';
 import { DisableFormModule } from '../shared/disable-form/disable-form.module';
 import { ImageWithStatusModule } from '../shared/image-with-status/image-with-status.module';
@@ -23,7 +22,7 @@ const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['login']);
 const routes: Routes = [
   {
     path: '',
-    canActivate: [AuthGuard, UserGuard],
+    canActivate: [AngularFireAuthGuard, UserGuard],
     data: { authGuardPipe: redirectUnauthorizedToLogin },
     component: EditRecipeIndexComponent,
   },

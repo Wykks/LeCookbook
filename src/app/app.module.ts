@@ -25,7 +25,7 @@ import { ROUTES } from './routes';
     BrowserModule,
     BrowserAnimationsModule,
     IonicModule.forRoot(),
-    RouterModule.forRoot(ROUTES, { preloadingStrategy: PreloadAllModules }), // TODO: Implement better preload strategy
+    RouterModule.forRoot(ROUTES, { preloadingStrategy: PreloadAllModules, relativeLinkResolution: 'legacy' }), // TODO: Implement better preload strategy
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     AngularFirestoreModule.enablePersistence(),

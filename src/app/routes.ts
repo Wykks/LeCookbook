@@ -1,6 +1,5 @@
-import { redirectUnauthorizedTo } from '@angular/fire/auth-guard';
+import { AngularFireAuthGuard, redirectUnauthorizedTo } from '@angular/fire/auth-guard';
 import { Routes } from '@angular/router';
-import { AuthGuard } from './core/auth.guard';
 import { LayoutComponent } from './core/layout/layout.component';
 import { UserGuard } from './core/user.guard';
 import { LIST_ROUTES } from './list/cookbook-list.module';
@@ -10,13 +9,10 @@ const redirectUnauthorizedToPublic = () =>
   redirectUnauthorizedTo(['list', 'public']);
 
 export const ROUTES: Routes = [
-  {
-    path: '',
+  { path: '',
     pathMatch: 'full',
-    canActivate: [AuthGuard],
     data: { authGuardPipe: redirectUnauthorizedToPublic },
-    redirectTo: 'list/personal',
-  },
+    redirectTo: 'list/personal' },
   {
     path: '',
     component: LayoutComponent,
@@ -39,14 +35,14 @@ export const ROUTES: Routes = [
       },
       {
         path: 'account',
-        canActivate: [AuthGuard, UserGuard],
+        canActivate: [AngularFireAuthGuard, UserGuard],
         data: { authGuardPipe: redirectUnauthorizedToLogin },
         loadChildren: () =>
           import('./account/account.module').then((m) => m.AccountModule),
       },
       {
         path: 'choose-username',
-        canActivate: [AuthGuard],
+        canActivate: [AngularFireAuthGuard],
         data: { authGuardPipe: redirectUnauthorizedToLogin },
         loadChildren: () =>
           import('./choose-username/choose-username.module').then(
@@ -70,10 +66,7 @@ export const ROUTES: Routes = [
       },
     ],
   },
-  {
-    path: '**',
-    canActivate: [AuthGuard],
+  { path: '**',
     data: { authGuardPipe: redirectUnauthorizedToPublic },
-    redirectTo: 'list/personal',
-  },
+    redirectTo: 'list/personal' },
 ];

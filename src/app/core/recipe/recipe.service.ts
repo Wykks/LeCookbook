@@ -116,8 +116,8 @@ export class RecipeService {
         snapshots.docs.map(
           (snapshot) =>
             <Recipe>{
-              id: snapshot.id,
               ...snapshot.data(),
+              id: snapshot.id,
             }
         )
       )
@@ -135,8 +135,8 @@ export class RecipeService {
           snapshots.docs.map(
             (snapshot) =>
               <Recipe>{
-                id: snapshot.id,
                 ...snapshot.data(),
+                id: snapshot.id,
               }
           )
         )

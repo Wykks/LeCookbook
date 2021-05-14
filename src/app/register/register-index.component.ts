@@ -56,7 +56,7 @@ export class RegisterIndexComponent {
 
   matchValues(): (AbstractControl: FormControl) => ValidationErrors | null {
     return (control: FormControl): ValidationErrors | null => {
-      return !!control.parent &&
+      return !!control.parent! &&
         !!control.parent.value &&
         control.value === (control.parent as FormGroup).controls.password.value
         ? null
